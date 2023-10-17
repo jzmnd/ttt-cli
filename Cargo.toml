@@ -1,0 +1,10 @@
+[package]
+name = "ttt"
+version = "0.1.0"
+authors = ["Jez Smith <j.smith.03@cantab.net>"]
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+clap-verbosity-flag = "2.0"
+thiserror = "1.0"
