@@ -39,11 +39,7 @@ pub struct LineSplitContiguous {
 
 impl Line for LineSplitContiguous {
     fn split(&self, delimiters: &[char]) -> Result<Vec<String>, ParseError> {
-        Ok(self
-            .line
-            .split(delimiters)
-            .map(String::from)
-            .collect())
+        Ok(self.line.split(delimiters).map(String::from).collect())
     }
 
     fn new(line: &str) -> Self {

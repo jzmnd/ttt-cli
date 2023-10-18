@@ -30,15 +30,17 @@ impl<T: Line> Table<T> {
             .map(|(value, _)| value)
             .ok_or(ParseError::ColumnCountError)
     }
+
+    fn parse_lines(&self, delimiters: &[char]) -> Result<Vec<Vec<String>>, ParseError> {
+        Ok(self
+            .lines
+            .iter()
+            .map(|a| a.split(delimiters).unwrap())
+            .collect())
+    }
 }
 
 pub fn read(filepath: &PathBuf) -> Result<String, std::io::Error> {
     let contents = std::fs::read_to_string(filepath);
     contents
 }
-
-// pub fn parse(contents: &str) {
-//     for line in contents.lines() {
-//         let line = Line>::from(line);
-//     }
-// }

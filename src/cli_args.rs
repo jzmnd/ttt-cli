@@ -19,6 +19,18 @@ pub struct CliArgs {
     #[arg(short, long)]
     pub filepath: PathBuf,
 
+    /// The delimiter to use
+    #[arg(short, long, value_enum, default_values_t = [Delimiter::Space])]
+    pub delimiters: Vec<Delimiter>,
+
+    /// Whether to treat contiguous delimiter as a single delimiter
+    #[arg(long)]
+    pub contiguous_delimiters: bool,
+
+    /// Whether to treat text in double-quotes as a single field
+    #[arg(long)]
+    pub quoted_fields: bool,
+
     #[clap(flatten)]
     pub verbose: Verbosity,
 }
@@ -45,6 +57,48 @@ impl fmt::Display for TableOutputFmt {
             TableOutputFmt::Html => write!(f, "HTML (.html)"),
             TableOutputFmt::Json => write!(f, "JSON (.json)"),
             TableOutputFmt::Sql => write!(f, "SQL DDL file (.sql)"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, ValueEnum)]
+pub enum Delimiter {
+    /// Space
+    Space,
+    /// Tab
+    Tab,
+    /// Comma (,)
+    Comma,
+    /// Vertical bar (|)
+    Vbar,
+    /// Period (.)
+    Period,
+    /// Colon (:)
+    Colon,
+}
+
+impl fmt::Display for Delimiter {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Delimiter::Space => write!(f, "Space"),
+            Delimiter::Tab => write!(f, "Tab"),
+            Delimiter::Comma => write!(f, "Comma"),
+            Delimiter::Vbar => write!(f, "Vertical bar"),
+            Delimiter::Period => write!(f, "Period"),
+            Delimiter::Colon => write!(f, "Colon"),
+        }
+    }
+}
+
+impl Delimiter {
+    fn as_char(&self) -> char {
+        match self {
+            Delimiter::Space => ' ',
+            Delimiter::Tab => '\t',
+            Delimiter::Comma => ',',
+            Delimiter::Vbar => '|',
+            Delimiter::Period => '.',
+            Delimiter::Colon => ':',
         }
     }
 }
