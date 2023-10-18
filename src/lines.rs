@@ -14,35 +14,40 @@ pub const DOUBLE_QUOTE: char = '\"';
 pub enum ParseError {
     #[error("Cannot parse line")]
     CannotParseLine,
+    #[error("Error auto-counting columns")]
+    ColumnCountError,
 }
 
 ///
 /// Trait for lines that can be split into separate fields
 ///
-pub trait Splitable {
+pub trait Line {
     fn split(&self, delimiters: &[char]) -> Result<Vec<String>, ParseError>;
     fn num_fields(&self, delimiters: &[char]) -> Result<usize, ParseError> {
         Ok(self.split(delimiters)?.len())
     }
+    fn new(line: &str) -> Self;
 }
 
 ///
 /// No double-quoted fields. Contiguous delimiters are treated separately.
 ///
 #[derive(Debug)]
-pub struct Line {
+pub struct LineSplitContiguous {
     line: String,
 }
 
-impl Splitable for Line {
+impl Line for LineSplitContiguous {
     fn split(&self, delimiters: &[char]) -> Result<Vec<String>, ParseError> {
-        Ok(self.line.split(delimiters).map(String::from).collect())
+        Ok(self
+            .line
+            .split(delimiters)
+            .map(String::from)
+            .collect())
     }
-}
 
-impl std::convert::From<&str> for Line {
-    fn from(line: &str) -> Self {
-        Line {
+    fn new(line: &str) -> Self {
+        LineSplitContiguous {
             line: line.to_string(),
         }
     }
@@ -56,7 +61,7 @@ pub struct LineIgnoreContiguous {
     line: String,
 }
 
-impl Splitable for LineIgnoreContiguous {
+impl Line for LineIgnoreContiguous {
     fn split(&self, delimiters: &[char]) -> Result<Vec<String>, ParseError> {
         Ok(self
             .line
@@ -65,10 +70,8 @@ impl Splitable for LineIgnoreContiguous {
             .map(String::from)
             .collect())
     }
-}
 
-impl From<&str> for LineIgnoreContiguous {
-    fn from(line: &str) -> Self {
+    fn new(line: &str) -> Self {
         LineIgnoreContiguous {
             line: line.to_string(),
         }
@@ -88,11 +91,11 @@ enum CharState {
 /// Double-quoted fields allowed. Contiguous delimiters are treated separately.
 ///
 #[derive(Debug)]
-pub struct LineQuoted {
+pub struct LineQuotedSplitContiguous {
     line: String,
 }
 
-impl Splitable for LineQuoted {
+impl Line for LineQuotedSplitContiguous {
     fn split(&self, delimiters: &[char]) -> Result<Vec<String>, ParseError> {
         let mut fields = Vec::new();
         let mut field = String::new();
@@ -150,11 +153,9 @@ impl Splitable for LineQuoted {
         }
         Ok(fields)
     }
-}
 
-impl From<&str> for LineQuoted {
-    fn from(line: &str) -> Self {
-        LineQuoted {
+    fn new(line: &str) -> Self {
+        LineQuotedSplitContiguous {
             line: line.to_string(),
         }
     }
@@ -168,7 +169,7 @@ pub struct LineQuotedIgnoreContiguous {
     line: String,
 }
 
-impl Splitable for LineQuotedIgnoreContiguous {
+impl Line for LineQuotedIgnoreContiguous {
     fn split(&self, delimiters: &[char]) -> Result<Vec<String>, ParseError> {
         let mut fields = Vec::new();
         let mut field = String::new();
@@ -223,10 +224,8 @@ impl Splitable for LineQuotedIgnoreContiguous {
         }
         Ok(fields)
     }
-}
 
-impl From<&str> for LineQuotedIgnoreContiguous {
-    fn from(line: &str) -> Self {
+    fn new(line: &str) -> Self {
         LineQuotedIgnoreContiguous {
             line: line.to_string(),
         }
@@ -238,22 +237,30 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_line_split() {
+    fn test_line_split_space_comma() {
         let s = r#"asdklsaj,,,alskjd,"kas  jd",,ksjd,sk,d"#;
 
-        let ln1 = Line::from(s);
-        let ln2 = LineIgnoreContiguous::from(s);
-        let ln3 = LineQuoted::from(s);
-        let ln4 = LineQuotedIgnoreContiguous::from(s);
-
         let delims = &[' ', ','];
+        let ln1 = LineSplitContiguous::new(s);
+        let ln2 = LineIgnoreContiguous::new(s);
+        let ln3 = LineQuotedSplitContiguous::new(s);
+        let ln4 = LineQuotedIgnoreContiguous::new(s);
 
         assert_eq!(ln1.num_fields(delims).unwrap(), 11);
         assert_eq!(ln2.num_fields(delims).unwrap(), 7);
         assert_eq!(ln3.num_fields(delims).unwrap(), 9);
         assert_eq!(ln4.num_fields(delims).unwrap(), 6);
+    }
+
+    #[test]
+    fn test_line_split_comma() {
+        let s = r#"asdklsaj,,,alskjd,"kas  jd",,ksjd,sk,d"#;
 
         let delims = &[','];
+        let ln1 = LineSplitContiguous::new(s);
+        let ln2 = LineIgnoreContiguous::new(s);
+        let ln3 = LineQuotedSplitContiguous::new(s);
+        let ln4 = LineQuotedIgnoreContiguous::new(s);
 
         assert_eq!(ln1.num_fields(delims).unwrap(), 9);
         assert_eq!(ln2.num_fields(delims).unwrap(), 6);
