@@ -232,3 +232,32 @@ impl From<&str> for LineQuotedIgnoreContiguous {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_line_split() {
+        let s = r#"asdklsaj,,,alskjd,"kas  jd",,ksjd,sk,d"#;
+
+        let ln1 = Line::from(s);
+        let ln2 = LineIgnoreContiguous::from(s);
+        let ln3 = LineQuoted::from(s);
+        let ln4 = LineQuotedIgnoreContiguous::from(s);
+
+        let delims = &[' ', ','];
+
+        assert_eq!(ln1.num_fields(delims).unwrap(), 11);
+        assert_eq!(ln2.num_fields(delims).unwrap(), 7);
+        assert_eq!(ln3.num_fields(delims).unwrap(), 9);
+        assert_eq!(ln4.num_fields(delims).unwrap(), 6);
+
+        let delims = &[','];
+
+        assert_eq!(ln1.num_fields(delims).unwrap(), 9);
+        assert_eq!(ln2.num_fields(delims).unwrap(), 6);
+        assert_eq!(ln3.num_fields(delims).unwrap(), 9);
+        assert_eq!(ln4.num_fields(delims).unwrap(), 6);
+    }
+}
