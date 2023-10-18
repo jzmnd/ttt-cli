@@ -10,6 +10,7 @@ use clap::Parser;
 
 mod cli_args;
 mod lines;
+mod readfile;
 
 fn main() {
     let args = crate::cli_args::CliArgs::parse();
@@ -17,5 +18,5 @@ fn main() {
     println!("Output : {}", args.output);
     println!("Path   : {}", args.filepath.display());
 
-    let contents = std::fs::read_to_string(&args.filepath);
+    let contents = crate::readfile::read(&args.filepath);
 }
