@@ -11,6 +11,7 @@ use clap::Parser;
 mod cli_args;
 mod lines;
 mod readfile;
+mod table;
 
 fn main() {
     let args = crate::cli_args::CliArgs::parse();
