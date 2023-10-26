@@ -7,7 +7,7 @@ use clap_verbosity_flag::Verbosity;
 use std::fmt;
 use std::path::PathBuf;
 
-/// A text-to-table CLI tool.
+/// Arguments to the text-to-table CLI tool.
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 pub struct CliArgs {
@@ -35,6 +35,7 @@ pub struct CliArgs {
     pub verbose: Verbosity,
 }
 
+/// Possible table output formats
 #[derive(Debug, Clone, ValueEnum)]
 pub enum TableOutputFmt {
     /// Comma Separated Variables
@@ -61,6 +62,7 @@ impl fmt::Display for TableOutputFmt {
     }
 }
 
+/// Possible text field delimiters
 #[derive(Debug, Clone, ValueEnum)]
 pub enum Delimiter {
     /// Space

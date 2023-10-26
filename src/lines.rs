@@ -8,7 +8,7 @@ use thiserror::Error;
 pub const DOUBLE_QUOTE: char = '\"';
 
 ///
-/// Line parsing related errors
+/// Line parsing related errors.
 ///
 #[derive(Error, Debug)]
 pub enum ParseError {
@@ -16,17 +16,27 @@ pub enum ParseError {
     CannotParseLine,
     #[error("Error auto-counting columns")]
     ColumnCountError,
+    #[error("No table has been defined")]
+    NoTableDefined,
 }
 
 ///
-/// Trait for lines that can be split into separate fields
+/// Trait for lines that can be split into separate fields.
 ///
 pub trait Line {
     fn split(&self, delimiters: &[char]) -> Result<Vec<String>, ParseError>;
+
     fn num_fields(&self, delimiters: &[char]) -> Result<usize, ParseError> {
         Ok(self.split(delimiters)?.len())
     }
-    fn new(line: &str) -> Self;
+
+    fn new(line: &str) -> Self
+    where
+        Self: Sized;
+
+    fn to_csv(&self, delimiters: &[char]) -> Result<String, ParseError> {
+        Ok(self.split(delimiters)?.join(","))
+    }
 }
 
 ///
