@@ -16,8 +16,6 @@ pub enum ParseError {
     CannotParseLine,
     #[error("Error auto-counting columns")]
     ColumnCountError,
-    #[error("No table has been defined")]
-    NoTableDefined,
 }
 
 ///
@@ -30,9 +28,7 @@ pub trait Line {
         Ok(self.split(delimiters)?.len())
     }
 
-    fn new(line: &str) -> Self
-    where
-        Self: Sized;
+    fn new(line: &str) -> Self;
 
     fn to_csv(&self, delimiters: &[char]) -> Result<String, ParseError> {
         Ok(self.split(delimiters)?.join(","))

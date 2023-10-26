@@ -17,7 +17,7 @@ fn main() {
     let delimiters_str = args
         .delimiters
         .iter()
-        .map(|i| i.to_string())
+        .map(|d| d.to_string())
         .collect::<Vec<_>>()
         .join(" ");
 
@@ -27,5 +27,5 @@ fn main() {
     println!("Contiguous delimiters : {}", args.contiguous_delimiters);
     println!("Quoted fields         : {}", args.quoted_fields);
 
-    crate::readfile::read(&args.filepath);
+    crate::readfile::read(&args);
 }

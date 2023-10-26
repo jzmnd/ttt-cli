@@ -1,3 +1,4 @@
+use crate::cli_args::CliArgs;
 use crate::lines::{
     Line, LineIgnoreContiguous, LineQuotedIgnoreContiguous, LineQuotedSplitContiguous,
     LineSplitContiguous, ParseError,
@@ -127,18 +128,20 @@ impl<T: Line> Table<T> {
 /// Primary entrypoint for reading a file, converting to a Table of Lines, parsing, and then
 /// converting to CSV records.
 ///
-pub fn read(filepath: &PathBuf) -> Result<(), Box<dyn Error>> {
+pub fn read(args: &CliArgs) -> Result<(), Box<dyn Error>> {
+    let delimiters = args.delimiters.iter().map(|d| d.as_char()).collect();
     let table_reader = TableBuilder::new()
-        .quoted_fields(true)
-        .contiguous_delimiters(true)
-        .delimiters(vec![' ', '\t'])
-        .from_path(filepath)?;
+        .quoted_fields(args.quoted_fields)
+        .contiguous_delimiters(args.contiguous_delimiters)
+        .delimiters(delimiters)
+        .from_path(&args.filepath)?;
 
     let csv_contents = table_reader.to_csv()?;
 
     let mut csv_reader = ReaderBuilder::new()
         .flexible(true)
         .has_headers(false)
+        .quoting(args.quoted_fields)
         .from_reader(csv_contents.as_bytes());
 
     for result in csv_reader.records() {

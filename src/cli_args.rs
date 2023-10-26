@@ -93,7 +93,7 @@ impl fmt::Display for Delimiter {
 }
 
 impl Delimiter {
-    fn as_char(&self) -> char {
+    pub fn as_char(&self) -> char {
         match self {
             Delimiter::Space => ' ',
             Delimiter::Tab => '\t',
