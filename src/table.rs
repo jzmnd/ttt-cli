@@ -1,3 +1,7 @@
+//!
+//! Table structures and functions
+//!
+
 use crate::lines::{
     Line, LineIgnoreContiguous, LineQuotedIgnoreContiguous, LineQuotedSplitContiguous,
     LineSplitContiguous, ParseError,
@@ -71,22 +75,10 @@ impl TableBuilder {
         use TableEnum::*;
         let contents = std::fs::read_to_string(filepath)?;
         let table = match (self.contiguous_delimiters, self.quoted_fields) {
-            (false, false) => SplitContiguous(Table::<LineSplitContiguous>::new(
-                &contents,
-                &self.delimiters,
-            )),
-            (true, false) => IgnoreContiguous(Table::<LineIgnoreContiguous>::new(
-                &contents,
-                &self.delimiters,
-            )),
-            (false, true) => QuotedSplitContiguous(Table::<LineQuotedSplitContiguous>::new(
-                &contents,
-                &self.delimiters,
-            )),
-            (true, true) => QuotedIgnoreContiguous(Table::<LineQuotedIgnoreContiguous>::new(
-                &contents,
-                &self.delimiters,
-            )),
+            (false, false) => SplitContiguous(Table::new(&contents, &self.delimiters)),
+            (true, false) => IgnoreContiguous(Table::new(&contents, &self.delimiters)),
+            (false, true) => QuotedSplitContiguous(Table::new(&contents, &self.delimiters)),
+            (true, true) => QuotedIgnoreContiguous(Table::new(&contents, &self.delimiters)),
         };
         Ok(table)
     }
