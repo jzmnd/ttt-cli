@@ -22,8 +22,9 @@ fn main() {
         .collect::<Vec<_>>()
         .join(" ");
 
-    println!("Output                : {}", args.output);
-    println!("Path                  : {}", args.filepath.display());
+    println!("Format                : {}", args.format);
+    println!("Input path            : {}", args.input.display());
+    println!("Output path           : {}", args.output.display());
     println!("Delimiters            : {}", delimiters_str);
     println!("Contiguous delimiters : {}", args.contiguous_delimiters);
     println!("Quoted fields         : {}", args.quoted_fields);

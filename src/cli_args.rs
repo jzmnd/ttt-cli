@@ -13,11 +13,15 @@ use std::path::PathBuf;
 pub struct CliArgs {
     /// The output table format
     #[arg(short, long, value_enum, default_value_t = TableOutputFmt::Csv)]
-    pub output: TableOutputFmt,
+    pub format: TableOutputFmt,
 
     /// The file path to read
     #[arg(short, long)]
-    pub filepath: PathBuf,
+    pub input: PathBuf,
+
+    /// The output file path
+    #[arg(short, long)]
+    pub output: PathBuf,
 
     /// The delimiter to use
     #[arg(short, long, value_enum, default_values_t = [Delimiter::Space])]
