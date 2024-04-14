@@ -14,8 +14,6 @@ pub const DOUBLE_QUOTE: char = '\"';
 pub enum ParseError {
     #[error("Cannot parse line")]
     CannotParseLine,
-    #[error("Error auto-counting columns")]
-    ColumnCountError,
 }
 
 ///
@@ -29,10 +27,6 @@ pub trait Line {
     }
 
     fn new(line: &str) -> Self;
-
-    fn to_csv(&self, delimiters: &[char]) -> Result<String, ParseError> {
-        Ok(self.split(delimiters)?.join(","))
-    }
 }
 
 ///
@@ -109,10 +103,7 @@ impl Line for LineQuotedSplitContiguous {
             state = match state {
                 CharState::Delimiter => match c {
                     None => break,
-                    Some(DOUBLE_QUOTE) => {
-                        field.push(DOUBLE_QUOTE);
-                        CharState::Quoted
-                    }
+                    Some(DOUBLE_QUOTE) => CharState::Quoted,
                     Some(c) if delimiters.contains(&c) => {
                         fields.push(String::new());
                         CharState::Delimiter
@@ -127,10 +118,7 @@ impl Line for LineQuotedSplitContiguous {
                         fields.push(mem::replace(&mut field, String::new()));
                         break;
                     }
-                    Some(DOUBLE_QUOTE) => {
-                        field.push(DOUBLE_QUOTE);
-                        CharState::Quoted
-                    }
+                    Some(DOUBLE_QUOTE) => CharState::Quoted,
                     Some(c) if delimiters.contains(&c) => {
                         fields.push(mem::replace(&mut field, String::new()));
                         CharState::Delimiter
@@ -142,10 +130,7 @@ impl Line for LineQuotedSplitContiguous {
                 },
                 CharState::Quoted => match c {
                     None => return Err(ParseError::CannotParseLine),
-                    Some(DOUBLE_QUOTE) => {
-                        field.push(DOUBLE_QUOTE);
-                        CharState::Unquoted
-                    }
+                    Some(DOUBLE_QUOTE) => CharState::Unquoted,
                     Some(c) => {
                         field.push(c);
                         CharState::Quoted
@@ -183,10 +168,7 @@ impl Line for LineQuotedIgnoreContiguous {
             state = match state {
                 CharState::Delimiter => match c {
                     None => break,
-                    Some(DOUBLE_QUOTE) => {
-                        field.push(DOUBLE_QUOTE);
-                        CharState::Quoted
-                    }
+                    Some(DOUBLE_QUOTE) => CharState::Quoted,
                     Some(c) if delimiters.contains(&c) => CharState::Delimiter,
                     Some(c) => {
                         field.push(c);
@@ -198,10 +180,7 @@ impl Line for LineQuotedIgnoreContiguous {
                         fields.push(mem::replace(&mut field, String::new()));
                         break;
                     }
-                    Some(DOUBLE_QUOTE) => {
-                        field.push(DOUBLE_QUOTE);
-                        CharState::Quoted
-                    }
+                    Some(DOUBLE_QUOTE) => CharState::Quoted,
                     Some(c) if delimiters.contains(&c) => {
                         fields.push(mem::replace(&mut field, String::new()));
                         CharState::Delimiter
@@ -213,10 +192,7 @@ impl Line for LineQuotedIgnoreContiguous {
                 },
                 CharState::Quoted => match c {
                     None => return Err(ParseError::CannotParseLine),
-                    Some(DOUBLE_QUOTE) => {
-                        field.push(DOUBLE_QUOTE);
-                        CharState::Unquoted
-                    }
+                    Some(DOUBLE_QUOTE) => CharState::Unquoted,
                     Some(c) => {
                         field.push(c);
                         CharState::Quoted

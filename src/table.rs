@@ -20,12 +20,12 @@ pub enum TableEnum {
 }
 
 impl TableEnum {
-    pub fn to_csv(&self) -> Result<String, ParseError> {
+    pub fn split(&self) -> Result<Vec<Vec<String>>, ParseError> {
         match self {
-            TableEnum::SplitContiguous(t) => t.to_csv(),
-            TableEnum::IgnoreContiguous(t) => t.to_csv(),
-            TableEnum::QuotedSplitContiguous(t) => t.to_csv(),
-            TableEnum::QuotedIgnoreContiguous(t) => t.to_csv(),
+            TableEnum::SplitContiguous(t) => t.split(),
+            TableEnum::IgnoreContiguous(t) => t.split(),
+            TableEnum::QuotedSplitContiguous(t) => t.split(),
+            TableEnum::QuotedIgnoreContiguous(t) => t.split(),
         }
     }
 }
@@ -100,14 +100,13 @@ impl<T: Line> Table<T> {
         }
     }
 
-    pub fn to_csv(&self) -> Result<String, ParseError> {
-        let csv_contents = self
+    pub fn split(&self) -> Result<Vec<Vec<String>>, ParseError> {
+        let contents = self
             .lines
             .iter()
-            .map(|line| line.to_csv(&self.delimiters))
-            .collect::<Result<Vec<String>, _>>()?
-            .join("\n");
+            .map(|line| line.split(&self.delimiters))
+            .collect::<Result<Vec<Vec<String>>, _>>()?;
 
-        Ok(csv_contents)
+        Ok(contents)
     }
 }

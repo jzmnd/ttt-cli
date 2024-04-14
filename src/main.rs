@@ -7,10 +7,11 @@
 #![allow(unused)]
 
 use clap::Parser;
+use std::process;
 
 mod cli_args;
+mod io;
 mod lines;
-mod readfile;
 mod table;
 
 fn main() {
@@ -29,5 +30,9 @@ fn main() {
     println!("Contiguous delimiters : {}", args.contiguous_delimiters);
     println!("Quoted fields         : {}", args.quoted_fields);
 
-    crate::readfile::read(&args);
+    let contents = crate::io::read(&args).unwrap_or_else(|err| {
+        eprintln!("Problem parsing input data: {}", err);
+        process::exit(1);
+    });
+    crate::io::write(&args, contents);
 }
