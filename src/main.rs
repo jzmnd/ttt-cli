@@ -30,9 +30,9 @@ fn main() {
     println!("Contiguous delimiters : {}", args.contiguous_delimiters);
     println!("Quoted fields         : {}", args.quoted_fields);
 
-    let contents = crate::io::read(&args).unwrap_or_else(|err| {
+    let table = crate::io::read(&args).unwrap_or_else(|err| {
         eprintln!("Problem parsing input data: {}", err);
         process::exit(1);
     });
-    crate::io::write(&args, contents);
+    crate::io::write(&args, table);
 }
