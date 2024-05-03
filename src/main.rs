@@ -34,5 +34,8 @@ fn main() {
         eprintln!("Problem parsing input data: {}", err);
         process::exit(1);
     });
-    crate::io::write(&args, table);
+    crate::io::write(&args, table).unwrap_or_else(|err| {
+        eprintln!("Problem writing output data: {}", err);
+        process::exit(1);
+    });
 }
