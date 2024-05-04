@@ -35,6 +35,10 @@ pub struct CliArgs {
     #[arg(long)]
     pub quoted_fields: bool,
 
+    /// Whether the first row should be treated as a header
+    #[arg(long)]
+    pub has_header: bool,
+
     #[clap(flatten)]
     pub verbose: Verbosity,
 }

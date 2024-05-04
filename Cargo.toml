@@ -5,6 +5,7 @@ authors = ["Jez Smith <j.smith.03@cantab.net>"]
 edition = "2021"
 
 [dependencies]
+build_html = "2.4.0"
 clap = { version = "4.0", features = ["derive"] }
 clap-verbosity-flag = "2.0"
 csv = "1.3"

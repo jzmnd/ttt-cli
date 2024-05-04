@@ -1,7 +1,10 @@
 use crate::cli_args::{CliArgs, TableOutputFmt};
-use crate::table::{TableBuilder, Table};
-use csv::{ReaderBuilder, WriterBuilder};
+use crate::table::{Table, TableBuilder};
+use build_html::{Html, Table as HtmlTable};
+use csv::WriterBuilder;
 use std::error::Error;
+use std::fs::File;
+use std::io::prelude::*;
 
 ///
 /// Primary entrypoint for reading a file, converting to a Table of Lines, parsing, and then
@@ -35,7 +38,11 @@ pub fn write(args: &CliArgs, table: Table) -> Result<(), Box<dyn Error>> {
             wtr.flush()?;
         }
         TableOutputFmt::Md => {}
-        TableOutputFmt::Html => {}
+        TableOutputFmt::Html => {
+            let html_table = HtmlTable::from(contents).to_html_string();
+            let mut file = File::create(&args.output)?;
+            file.write_all(html_table.as_bytes())?;
+        }
         TableOutputFmt::Json => {}
         TableOutputFmt::Sql => {}
     }

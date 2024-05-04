@@ -51,6 +51,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "build_html"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3108fe6fe7ac796fb7625bdde8fa2b67b5a7731496251ca57c7b8cadd78a16a1"
+
+[[package]]
 name = "clap"
 version = "4.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -242,6 +248,7 @@ dependencies = [
 name = "ttt"
 version = "0.1.0"
 dependencies = [
+ "build_html",
  "clap",
  "clap-verbosity-flag",
  "csv",

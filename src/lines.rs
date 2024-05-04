@@ -115,12 +115,12 @@ impl Line for LineQuotedSplitContiguous {
                 },
                 CharState::Unquoted => match c {
                     None => {
-                        fields.push(mem::replace(&mut field, String::new()));
+                        fields.push(mem::take(&mut field));
                         break;
                     }
                     Some(DOUBLE_QUOTE) => CharState::Quoted,
                     Some(c) if delimiters.contains(&c) => {
-                        fields.push(mem::replace(&mut field, String::new()));
+                        fields.push(mem::take(&mut field));
                         CharState::Delimiter
                     }
                     Some(c) => {
@@ -177,12 +177,12 @@ impl Line for LineQuotedIgnoreContiguous {
                 },
                 CharState::Unquoted => match c {
                     None => {
-                        fields.push(mem::replace(&mut field, String::new()));
+                        fields.push(mem::take(&mut field));
                         break;
                     }
                     Some(DOUBLE_QUOTE) => CharState::Quoted,
                     Some(c) if delimiters.contains(&c) => {
-                        fields.push(mem::replace(&mut field, String::new()));
+                        fields.push(mem::take(&mut field));
                         CharState::Delimiter
                     }
                     Some(c) => {
