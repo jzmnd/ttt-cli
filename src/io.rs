@@ -1,4 +1,5 @@
 use crate::cli_args::{CliArgs, TableOutputFmt};
+use crate::markdown::MarkdownTable;
 use crate::table::{Table, TableBuilder};
 use build_html::{Html, Table as HtmlTable};
 use csv::WriterBuilder;
@@ -37,7 +38,13 @@ pub fn write(args: &CliArgs, table: Table) -> Result<(), Box<dyn Error>> {
             }
             wtr.flush()?;
         }
-        TableOutputFmt::Md => {}
+        TableOutputFmt::Md => {
+            let md_table = MarkdownTable::new(contents)
+                .has_header(args.has_header)
+                .to_markdown()?;
+            let mut file = File::create(&args.output)?;
+            file.write_all(md_table.as_bytes())?;
+        }
         TableOutputFmt::Html => {
             let html_table = HtmlTable::from(contents).to_html_string();
             let mut file = File::create(&args.output)?;

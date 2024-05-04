@@ -12,6 +12,7 @@ use std::process;
 mod cli_args;
 mod io;
 mod lines;
+mod markdown;
 mod table;
 
 fn main() {
@@ -29,6 +30,7 @@ fn main() {
     println!("Delimiters            : {}", delimiters_str);
     println!("Contiguous delimiters : {}", args.contiguous_delimiters);
     println!("Quoted fields         : {}", args.quoted_fields);
+    println!("Has header            : {}", args.has_header);
 
     let table = crate::io::read(&args).unwrap_or_else(|err| {
         eprintln!("Problem parsing input data: {}", err);

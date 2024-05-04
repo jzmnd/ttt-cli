@@ -1,2 +1,5 @@
 /target
 /examples
+
+# MacOS
+.DS_Store
