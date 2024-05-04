@@ -12,32 +12,32 @@ use std::path::PathBuf;
 ///
 /// Enum of all tables with different line types.
 ///
-pub enum TableEnum {
-    SplitContiguous(Table<LineSplitContiguous>),
-    IgnoreContiguous(Table<LineIgnoreContiguous>),
-    QuotedSplitContiguous(Table<LineQuotedSplitContiguous>),
-    QuotedIgnoreContiguous(Table<LineQuotedIgnoreContiguous>),
+pub enum Table {
+    SplitContiguous(TableContent<LineSplitContiguous>),
+    IgnoreContiguous(TableContent<LineIgnoreContiguous>),
+    QuotedSplitContiguous(TableContent<LineQuotedSplitContiguous>),
+    QuotedIgnoreContiguous(TableContent<LineQuotedIgnoreContiguous>),
 }
 
-impl TableEnum {
+impl Table {
     pub fn split(&self) -> Result<Vec<Vec<String>>, ParseError> {
         match self {
-            TableEnum::SplitContiguous(t) => t.split(),
-            TableEnum::IgnoreContiguous(t) => t.split(),
-            TableEnum::QuotedSplitContiguous(t) => t.split(),
-            TableEnum::QuotedIgnoreContiguous(t) => t.split(),
+            Table::SplitContiguous(t) => t.split(),
+            Table::IgnoreContiguous(t) => t.split(),
+            Table::QuotedSplitContiguous(t) => t.split(),
+            Table::QuotedIgnoreContiguous(t) => t.split(),
         }
     }
 }
 
 ///
-/// Table builder. This builder generates a TableEnum variant depending on the provided parameters.
+/// Table builder. This builder generates a Table variant depending on the provided parameters.
 ///
 pub struct TableBuilder {
     delimiters: Vec<char>,
     contiguous_delimiters: bool,
     quoted_fields: bool,
-    table: Option<TableEnum>,
+    table: Option<Table>,
 }
 
 impl Default for TableBuilder {
@@ -71,14 +71,14 @@ impl TableBuilder {
         self
     }
 
-    pub fn from_path(&mut self, filepath: &PathBuf) -> Result<TableEnum, Box<dyn Error>> {
-        use TableEnum::*;
+    pub fn from_path(&mut self, filepath: &PathBuf) -> Result<Table, Box<dyn Error>> {
+        use Table::*;
         let contents = std::fs::read_to_string(filepath)?;
         let table = match (self.contiguous_delimiters, self.quoted_fields) {
-            (false, false) => SplitContiguous(Table::new(&contents, &self.delimiters)),
-            (true, false) => IgnoreContiguous(Table::new(&contents, &self.delimiters)),
-            (false, true) => QuotedSplitContiguous(Table::new(&contents, &self.delimiters)),
-            (true, true) => QuotedIgnoreContiguous(Table::new(&contents, &self.delimiters)),
+            (false, false) => SplitContiguous(TableContent::new(&contents, &self.delimiters)),
+            (true, false) => IgnoreContiguous(TableContent::new(&contents, &self.delimiters)),
+            (false, true) => QuotedSplitContiguous(TableContent::new(&contents, &self.delimiters)),
+            (true, true) => QuotedIgnoreContiguous(TableContent::new(&contents, &self.delimiters)),
         };
         Ok(table)
     }
@@ -87,14 +87,14 @@ impl TableBuilder {
 ///
 /// Table that contains the vec of lines and the required line delimiters.
 ///
-pub struct Table<T: Line> {
+pub struct TableContent<T: Line> {
     lines: Vec<T>,
     delimiters: Vec<char>,
 }
 
-impl<T: Line> Table<T> {
+impl<T: Line> TableContent<T> {
     pub fn new(contents: &str, delimiters: &[char]) -> Self {
-        Table {
+        TableContent {
             lines: contents.lines().map(T::new).collect(),
             delimiters: delimiters.to_vec(),
         }
