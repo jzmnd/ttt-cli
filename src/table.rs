@@ -37,7 +37,6 @@ pub struct TableBuilder {
     delimiters: Vec<char>,
     contiguous_delimiters: bool,
     quoted_fields: bool,
-    table: Option<Table>,
 }
 
 impl Default for TableBuilder {
@@ -46,7 +45,6 @@ impl Default for TableBuilder {
             delimiters: vec![' '],
             contiguous_delimiters: false,
             quoted_fields: false,
-            table: None,
         }
     }
 }
