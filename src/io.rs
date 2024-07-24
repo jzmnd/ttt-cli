@@ -1,5 +1,6 @@
 use crate::cli_args::{CliArgs, TableOutputFmt};
 use crate::markdown::MarkdownTable;
+use crate::sqlddl::SqlDdlTable;
 use crate::table::{Table, TableBuilder};
 use build_html::{Html, Table as HtmlTable};
 use csv::WriterBuilder;
@@ -51,7 +52,13 @@ pub fn write(args: &CliArgs, table: Table) -> Result<(), Box<dyn Error>> {
             file.write_all(html_table.as_bytes())?;
         }
         TableOutputFmt::Json => {}
-        TableOutputFmt::Sql => {}
+        TableOutputFmt::Sql => {
+            let sql_ddl_table = SqlDdlTable::new(contents)
+                .has_header(args.has_header)
+                .to_sql()?;
+            let mut file = File::create(&args.output)?;
+            file.write_all(sql_ddl_table.as_bytes())?;
+        }
     }
     Ok(())
 }

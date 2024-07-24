@@ -97,7 +97,7 @@ impl MarkdownTable {
     }
 
     ///
-    /// Output the table as a markdown string
+    /// Output the table as a markdown string.
     ///
     pub fn to_markdown(&self) -> Result<String, MarkdownError> {
         let col_widths = self.get_column_widths();

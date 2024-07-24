@@ -13,6 +13,7 @@ mod cli_args;
 mod io;
 mod lines;
 mod markdown;
+mod sqlddl;
 mod table;
 
 fn main() {
